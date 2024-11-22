@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MajorquesMapper">
+    <resultMap id="MajorquesResultMap" type="com.ruoyi.system.domain.Majorques">
+        <id property="id" column="id"/>
+        <result property="dicVal1" column="dic_val1"/>
+        <result property="dicVal2" column="dic_val2"/>
+        <result property="dicVal3" column="dic_val3"/>
+        <result property="dicVal4" column="dic_val4"/>
+        <result property="dicVal5" column="dic_val5"/>
+        <result property="dicVal6" column="dic_val6"/>
+        <result property="dicVal7" column="dic_val7"/>
+        <result property="dicVal8" column="dic_val8"/>
+    </resultMap>
+    <select id="selectMajorqueById" resultMap="MajorquesResultMap">
+        SELECT * FROM majorques WHERE id = #{id}
+    </select>
+</mapper>

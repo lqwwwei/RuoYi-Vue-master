@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TestscoresMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.Testscores">
+        <id column="id" property="id" />
+        <result column="testrecords_id" property="testrecordsId" />
+        <result column="subject_id" property="subjectId" />
+        <result column="user_answer" property="userAnswer" />
+        <result column="score" property="score" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <select id="findRecode" resultMap="BaseResultMap">
+        SELECT * FROM testscores WHERE testrecords_id = #{testrecordsId} AND subject_id = #{subjectId}
+    </select>
+
+    <insert id="insert" parameterType="com.ruoyi.system.domain.Testscores" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO testscores (testrecords_id, subject_id, user_answer, score, created_at, updated_at)
+        VALUES (#{testrecordsId}, #{subjectId}, #{userAnswer}, #{score}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="updateTests" parameterType="com.ruoyi.system.domain.Testscores">
+        UPDATE testscores SET
+        user_answer = #{userAnswer},
+        score = #{score},
+        updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <select id="getTestscoresById" resultMap="BaseResultMap">
+        SELECT * FROM testscores WHERE testrecords_id = #{testRecodeId}
+    </select>
+
+</mapper>

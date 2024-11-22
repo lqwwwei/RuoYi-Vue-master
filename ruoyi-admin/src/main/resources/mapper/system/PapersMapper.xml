@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PapersMapper">
+    <insert id="insertPaper" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO papers (title, total_score, created_at, updated_at)
+        VALUES (#{title}, #{totalScore}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <resultMap id="PaperResultMap" type="com.ruoyi.system.domain.Papers">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="totalScore" column="total_score"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="selectPapersList" parameterType="com.ruoyi.system.domain.Papers" resultMap="PaperResultMap">
+        SELECT
+        id,
+        title,
+        total_score,
+        created_at,
+        updated_at
+        FROM
+        papers
+        <where>
+            <if test="title != null and title != ''"></if>
+        </where>
+    </select>
+    <delete id="deletePaperById" parameterType="Long">
+        delete from papers where id = #{id}
+    </delete>
+</mapper>

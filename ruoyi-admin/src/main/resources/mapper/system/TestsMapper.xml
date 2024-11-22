@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TestsMapper">
+    
+    <resultMap type="Tests" id="TestsResult">
+        <result property="id"    column="id"    />
+        <result property="paperId"    column="paper_id"    />
+        <result property="paperName"    column="paperName"    />
+        <result property="testName"    column="test_name"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="updatedAt"    column="updated_at"    />
+        <result property="status" column="status"/>
+        <result property="totalScore" column="total_score"/>
+    </resultMap>
+
+    <sql id="selectTestsVo">
+        select id, paper_id, test_name, start_time, end_time, total_score , created_at, updated_at from tests
+    </sql>
+
+    <select id="selectTestsList" parameterType="Tests" resultMap="TestsResult">
+        SELECT
+        t.id,
+        t.paper_id,
+        t.test_name,
+        t.start_time,
+        t.end_time,
+        t.status,
+        t.total_score,
+        p.title AS paperName
+        FROM
+        tests t
+        LEFT JOIN
+        papers p ON t.paper_id = p.id
+        <where>
+            <if test="userId != null"> AND t.user_id = #{userId} </if>
+            <if test="paperId != null"> AND t.paper_id = #{paperId}</if>
+            <if test="paperName != null"> AND p.title = #{paperName}</if>
+            <if test="testName != null and testName != ''"> AND t.test_name LIKE CONCAT('%', #{testName}, '%')</if>
+            <if test="startTime != null"> AND t.start_time = #{startTime}</if>
+            <if test="endTime != null"> AND t.end_time = #{endTime}</if>
+            <if test="status != null"> AND t.status = #{status}</if>
+            <if test="totalScore != null"> AND t.total_score = #{totalScore}</if>
+        </where>
+    </select>
+
+    <select id="selectTestsById" parameterType="Long" resultMap="TestsResult">
+        <include refid="selectTestsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTests" parameterType="Tests">
+        insert into tests
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="paperId != null">paper_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="testName != null">test_name,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="updatedAt != null">updated_at,</if>
+            <if test="totalScore != null">total_score,</if>
+            <if test="status != null">status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="paperId != null">#{paperId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="testName != null">#{testName},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="updatedAt != null">#{updatedAt},</if>
+            <if test="totalScore != null">#{totalScore},</if>
+            <if test="status != null">#{status},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTests" parameterType="Tests">
+        update tests
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="paperId != null">paper_id = #{paperId},</if>
+            <if test="testName != null">test_name = #{testName},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+            <if test="totalScore != null">total_score = #{totalScore},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTestsById" parameterType="Long">
+        delete from tests where id = #{id}
+    </delete>
+
+    <delete id="deleteTestsByIds" parameterType="String">
+        delete from tests where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

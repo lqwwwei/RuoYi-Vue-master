@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.system.mapper.SubjectsMapper">
+    <insert id="batchInsertSubjects" parameterType="java.util.List">
+        INSERT INTO subjects (part, `order`, content, type, option_a, option_b, option_c, option_d, answer, paper_id, created_at, updated_at)
+        VALUES
+        <foreach collection="subjects" item="subject" separator=",">
+            (
+            <if test="subject.part != null">#{subject.part}</if><if test="subject.part == null">NULL</if>,
+            <if test="subject.order != null">#{subject.order}</if><if test="subject.order == null">NULL</if>,
+            <if test="subject.content != null">#{subject.content}</if><if test="subject.content == null">NULL</if>,
+            <if test="subject.type != null">#{subject.type}</if><if test="subject.type == null">NULL</if>,
+            <if test="subject.optionA != null">#{subject.optionA}</if><if test="subject.optionA == null">NULL</if>,
+            <if test="subject.optionB != null">#{subject.optionB}</if><if test="subject.optionB == null">NULL</if>,
+            <if test="subject.optionC != null">#{subject.optionC}</if><if test="subject.optionC == null">NULL</if>,
+            <if test="subject.optionD != null">#{subject.optionD}</if><if test="subject.optionD == null">NULL</if>,
+            <if test="subject.answer != null">#{subject.answer}</if><if test="subject.answer == null">NULL</if>,
+            <if test="subject.paperId != null">#{subject.paperId}</if><if test="subject.paperId == null">NULL</if>,
+            <if test="subject.createdAt != null">#{subject.createdAt}</if><if test="subject.createdAt == null">NULL</if>,
+            <if test="subject.updatedAt != null">#{subject.updatedAt}</if><if test="subject.updatedAt == null">NULL</if>
+            )
+        </foreach>
+    </insert>
+    <resultMap id="SubjectResultMap" type="com.ruoyi.system.domain.Subjects">
+        <id property="id" column="id"/>
+        <result property="part" column="part"/>
+        <result property="order" column="`order`"/>
+        <result property="content" column="content"/>
+        <result property="type" column="type"/>
+        <result property="optionA" column="option_a"/>
+        <result property="optionB" column="option_b"/>
+        <result property="optionC" column="option_c"/>
+        <result property="optionD" column="option_d"/>
+        <result property="answer" column="answer"/>
+        <result property="paperId" column="paper_id"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="getSbujectsBypaperId" parameterType="Long" resultMap="SubjectResultMap">
+        SELECT id, content, type, option_a, option_b, option_c, option_d
+        FROM subjects
+        WHERE paper_id = #{paperId}
+    </select>
+
+    <select id="getSubjectsByPaperIdAndType" parameterType="map" resultMap="SubjectResultMap">
+        SELECT id, content, type, option_a, option_b, option_c, option_d
+        FROM subjects
+        WHERE paper_id = #{paperId} AND type=#{subjectType}
+    </select>
+
+    <select id="findBySubjectId" parameterType="Long" resultMap="SubjectResultMap">
+        SELECT  id, type, answer
+        FROM subjects
+        WHERE id = #{id}
+    </select>
+</mapper>
