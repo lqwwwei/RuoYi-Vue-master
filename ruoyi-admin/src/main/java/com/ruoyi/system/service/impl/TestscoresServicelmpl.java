@@ -21,7 +21,7 @@ public class TestscoresServicelmpl implements ITestscoresService {
     @Autowired
     private SubjectsMapper subjectsMapper;
     @Override
-    public void updateTests(Testscores testscores) {
+    public void updateTestscores(Testscores testscores) {
         // 查找现有记录
         Testscores existingRecord = testscoresMapper.findRecode(testscores.getTestrecordsId(), testscores.getSubjectId());
 
@@ -47,12 +47,9 @@ public class TestscoresServicelmpl implements ITestscoresService {
     public Double calculateAndSaveScore(Testscores testscores) {
         // 根据subject_id和user_answer查找正确答案
         Subjects subject = subjectsMapper.findBySubjectId(testscores.getSubjectId());
-
         if (subject != null) {
             // 计算分数的逻辑
             double score = 0;
-            System.out.println(666666666);
-            System.out.println(subject.getType());
             if(subject.getType()==0) {
                 System.out.println("该题是单选");
                 if (subject.getAnswer().equals(testscores.getUserAnswer())) {
@@ -61,7 +58,7 @@ public class TestscoresServicelmpl implements ITestscoresService {
                     score = 0;  // 假设答错得0分
                 }
             }
-            if(subject.getType()==1) {
+            else if(subject.getType()==1) {
                 if (subject.getAnswer().equals(testscores.getUserAnswer())) {
                     score = 2;  // 假设答对得2分
                 } else {
@@ -74,31 +71,18 @@ public class TestscoresServicelmpl implements ITestscoresService {
                 if(correctAnswer.equals(userAnswer)){
                     score=5;
                 }else {
-                    // 初始化分数
-                    // 每个位置的分数
+
                     double positionScore = 1.25;
-                    // 将正确答案和用户答案转换为字符数组
+
                     char[] correctChars = correctAnswer.toCharArray();
                     char[] userChars = userAnswer.toCharArray();
-
-                    // 获取较长的数组长度
-//                    int maxLength = Math.max(correctChars.length, userChars.length);
-//                    // 遍历每个位置
-//                    for (int i = 0; i < maxLength; i++) {
-//                        char correctChar = correctChars[i]; //
-//                        char userChar = userChars[i]; //
-//                        // 如果当前位置的选项正确
-//                        if (correctChar == userChar) {
-//                            score +=positionScore;
-//                        }
-//                    }
                     HashSet<Character> correctSet = new HashSet<>();
                     for (char c : correctAnswer.toCharArray()) {
-                        correctSet.add(c); // 将正确答案中的每个字符添加到HashSet
+                        correctSet.add(c);
                     }
 
                     for (char c : userAnswer.toCharArray()) {
-                        if (correctSet.contains(c)) { // 检查用户答案中的字符是否在HashSet中
+                        if (correctSet.contains(c)) {
                             score += positionScore; // 如果存在，则增加分数
                             correctSet.remove(c); // 移除已经匹配过的字符，防止重复计分
                         }
@@ -109,7 +93,7 @@ public class TestscoresServicelmpl implements ITestscoresService {
             testscores.setScore(score);
             // 调用updateTests方法保存或更新记录
 
-            updateTests(testscores);
+            updateTestscores(testscores);
             return score;
         } else {
             throw new RuntimeException("无法找到对应的试题信息");

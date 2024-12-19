@@ -18,7 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTestsVo">
-        select id, paper_id, test_name, start_time, end_time, total_score , created_at, updated_at from tests
+        select id, paper_id, status ,test_name, start_time, end_time, total_score , created_at, updated_at from tests
     </sql>
 
     <select id="selectTestsList" parameterType="Tests" resultMap="TestsResult">
@@ -30,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         t.end_time,
         t.status,
         t.total_score,
+        t.created_at,
         p.title AS paperName
         FROM
         tests t
@@ -43,6 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="startTime != null"> AND t.start_time = #{startTime}</if>
             <if test="endTime != null"> AND t.end_time = #{endTime}</if>
             <if test="status != null"> AND t.status = #{status}</if>
+            <if test="createdAt != null"> AND t.created_at = #{createdAt}</if>
             <if test="totalScore != null"> AND t.total_score = #{totalScore}</if>
         </where>
     </select>
@@ -95,14 +97,54 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+    <update id="updateTestsByName" parameterType="map">
+        update tests
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tests.testName != null">test_name = #{tests.testName},</if>
+            <if test="tests.startTime != null">start_time = #{tests.startTime},</if>
+            <if test="tests.endTime != null">end_time = #{tests.endTime},</if>
+            <if test="tests.createdAt != null">created_at = #{tests.createdAt},</if>
+            <if test="tests.updatedAt != null">updated_at = #{tests.updatedAt},</if>
+            <if test="tests.paperId != null">paper_id = #{tests.paperId},</if>
+            <if test="tests.status != null">
+                status = CASE
+                WHEN status = 3 THEN status
+                ELSE #{tests.status}
+                END,
+            </if>
+        </trim>
+        where test_name = #{name}
+    </update>
+
     <delete id="deleteTestsById" parameterType="Long">
-        delete from tests where id = #{id}
+        DELETE FROM tests
+        WHERE test_name = (
+        SELECT test_name
+        FROM tests
+        WHERE id = #{id}
     </delete>
 
     <delete id="deleteTestsByIds" parameterType="String">
-        delete from tests where id in 
+        DELETE FROM tests
+        WHERE id IN
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+        OR test_name IN (
+        SELECT t.test_name FROM (
+        SELECT DISTINCT test_name FROM tests
+        WHERE id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        ) t
+        )
     </delete>
+
+    <select id="isExist" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tests
+        WHERE test_name = #{name}
+    </select>
+
 </mapper>

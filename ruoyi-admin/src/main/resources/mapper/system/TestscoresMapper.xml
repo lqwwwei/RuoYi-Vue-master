@@ -12,6 +12,7 @@
         <result column="score" property="score" />
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
+        <result property="type" column="type" />
     </resultMap>
 
     <select id="findRecode" resultMap="BaseResultMap">
@@ -32,7 +33,15 @@
     </update>
 
     <select id="getTestscoresById" resultMap="BaseResultMap">
-        SELECT * FROM testscores WHERE testrecords_id = #{testRecodeId}
+        SELECT
+        t.*,
+        s.type
+        FROM
+        testscores t
+        LEFT JOIN
+        subjects s ON t.subject_id = s.id
+        WHERE
+        t.testrecords_id = #{testRecodeId}
     </select>
 
 </mapper>

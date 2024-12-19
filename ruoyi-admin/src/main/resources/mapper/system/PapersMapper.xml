@@ -32,4 +32,21 @@
     <delete id="deletePaperById" parameterType="Long">
         delete from papers where id = #{id}
     </delete>
+    <select id="selectPaperByid" parameterType="Long">
+        SELECT
+        id,
+        title,
+        total_score,
+        created_at,
+        updated_at
+        FROM
+        papers
+        where id = #{id}
+    </select>
+
+    <select id="isExist" resultType="java.lang.Integer" parameterType="String">
+        SELECT COUNT(*)
+        FROM papers
+        WHERE title = #{name}
+    </select>
 </mapper>

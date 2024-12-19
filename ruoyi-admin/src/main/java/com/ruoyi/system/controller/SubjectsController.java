@@ -11,7 +11,10 @@ import com.ruoyi.system.domain.Papers;
 import com.ruoyi.system.domain.Tests;
 import com.ruoyi.system.mapper.MajorquesMapper;
 import com.ruoyi.system.mapper.PapersMapper;
+import com.ruoyi.system.service.IPapersService;
 import com.ruoyi.system.service.ITestsService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,7 @@ import javax.security.auth.Subject;
  * @author ruoyi
  * @date 2024-10-28
  */
+@Api(tags = "subjects-controller")
 @RestController
 @RequestMapping("/system/subjects")
 public class SubjectsController extends BaseController
@@ -44,10 +48,14 @@ public class SubjectsController extends BaseController
 
     @Autowired
     private ITestsService testsService;
+
+    @Autowired
+    private IPapersService papersService;
     /**
      * 导入试题
      */
     @Anonymous
+    @ApiOperation("导入试题")
 //    @PreAuthorize("@ss.hasPermi('system:subjects:import')")
     @Log(title = "导入试题", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
@@ -61,19 +69,23 @@ public class SubjectsController extends BaseController
 
         try (InputStream inputStream = file.getInputStream()) {
             String fileName = file.getOriginalFilename();//获取文件名
-            String title = fileName.substring(0, fileName.lastIndexOf("."));//去掉文件后缀当作title
+            String title = fileName.substring(0, fileName.lastIndexOf("."));
             Workbook workbook = new XSSFWorkbook(inputStream);
             Sheet sheet = workbook.getSheetAt(0);
             List<Subjects> subjects = new ArrayList<>();
+
+            if(papersService.isExist(title)){
+                return AjaxResult.error("导入失败，试卷名不能重复");
+            }
 
             //start 验证行数与列数
             int rowCount = sheet.getLastRowNum() + 1; // 行数从0开始计数
             int colCount = sheet.getRow(0).getPhysicalNumberOfCells();//列数
             if (rowCount < 34||colCount < 8) {
-                throw new Exception("Excel 文件缺少内容");
+                return AjaxResult.error("Excel 文件缺少内容");
             }
             if (rowCount > 34||colCount > 8) {
-                throw new Exception("Excel 文件有多余内容");
+                return  AjaxResult.error("Excel 文件有多余内容");
             }
             //end 验证行数与列数
 
@@ -93,7 +105,7 @@ public class SubjectsController extends BaseController
             for (int i = 0; i < expectedHeader.length; i++) {
                 Cell cell = headerRow.getCell(i);
                 if (cell == null || !expectedHeader[i].equals(getCellValueAsString(cell))) {
-                    throw new Exception("标题行第 " + (i + 1) + " 列不匹配 ");
+                    return  AjaxResult.error("标题行第 " + (i + 1) + " 列不匹配 ");
                 }
             }
             // end 比对标题行的每一个单元格与 head 记录的内容
@@ -106,35 +118,35 @@ public class SubjectsController extends BaseController
                 //start 验证大题序号和标准答案内容
                 if ( row.getRowNum() <= 12) {
                     if (!getCellValueAsString(row.getCell(0)).equals(firstRecode.getDicVal1())) {
-                        throw new Exception("单选题的大题序号必须是一");
+                        return  AjaxResult.error("单选题的大题序号必须是一");
                     }
                     if (row.getRowNum() >= 1 && row.getRowNum() <= 10) {
                         String answer = getCellValueAsString(row.getCell(7));
                         if (!"A".equals(answer) && !"B".equals(answer) && !"C".equals(answer) && !"D".equals(answer)) {
-                            throw new Exception("单选题的答案必须是A、B、C或D中的一个值");
+                            return  AjaxResult.error("单选题的答案必须是A、B、C或D中的一个值");
                         }
                     }
                 }
 
                 if ( 13<=row.getRowNum()&&row.getRowNum() <= 23) {
                     if (!getCellValueAsString(row.getCell(0)).equals(secondRecode.getDicVal1())) {
-                        throw new Exception("判断题的大题序号必须是二");
+                        return  AjaxResult.error("判断题的大题序号必须是二");
                     }
                     if (row.getRowNum() >= 14 && row.getRowNum() <= 23) {
                         String answer = getCellValueAsString(row.getCell(7));
                         if (!"T".equals(answer) && !"F".equals(answer)) {
-                            throw new Exception("判断题的答案必须是T、F中的一个值");
+                            return  AjaxResult.error("判断题的答案必须是T、F中的一个值");
                         }
                     }
                 }
                 if ( 24<=row.getRowNum()&&row.getRowNum() <= 34) {
                     if (!getCellValueAsString(row.getCell(0)).equals(thirdRecode.getDicVal1())) {
-                        throw new Exception("多选题的大题序号必须是三");
+                        return  AjaxResult.error("多选题的大题序号必须是三");
                     }
                     if (row.getRowNum() >= 25 && row.getRowNum() <= 34) {
                         String answer = getCellValueAsString(row.getCell(7));
                         if (!answer.matches("[ABCD]{2,4}")) {
-                            throw new Exception("多选题的答案必须是由A、B、C、D组成的任意组合，且每个字母最多出现一次");
+                            return  AjaxResult.error("多选题的答案必须是由A、B、C、D组成的任意组合，且每个字母最多出现一次");
                         }
                     }
                 }
@@ -144,7 +156,7 @@ public class SubjectsController extends BaseController
                 //start 验证小题序号
                 int order = getCellValueAsInt(row.getCell(1));
                 if (order-1 != index) {
-                    throw new Exception("小题序号必须是连续的，期望小题序号: " + (index+1)+ " 实际小题序号: " + order);
+                    return  AjaxResult.error("小题序号必须是连续的，期望小题序号: " + (index+1)+ " 实际小题序号: " + order);
                 }
                 // 更新期望的小题序号
                 index++;
@@ -174,8 +186,8 @@ public class SubjectsController extends BaseController
             }
 
             Papers paper = new Papers();
-            paper.setTitle(title); // 你可以从Excel或其他地方获取试卷标题
-            paper.setTotal_score(100.00); // 你可以从Excel或其他地方获取总分
+            paper.setTitle(title);
+            paper.setTotal_score(100.00);
             paper.setCreatedAt(new Date());
             paper.setUpdatedAt(new Date());
             // 插入试卷记录
@@ -189,6 +201,7 @@ public class SubjectsController extends BaseController
             if (result) {
                 Map<String, Object> data = new HashMap<>();
                 data.put("paperId", paperId);
+                data.put("paperName",paper.getTitle());
                 return AjaxResult.success("试题导入成功",data);
             } else {
                 return AjaxResult.error("试题导入失败");

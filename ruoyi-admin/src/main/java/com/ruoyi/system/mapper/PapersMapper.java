@@ -4,6 +4,7 @@ import com.ruoyi.system.domain.Papers;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -14,4 +15,8 @@ public interface PapersMapper {
     public List<Papers> selectPapersList(Papers papers);
 
     public int deletePaperById(Long id);
+
+    public int selectPaperByid(Long id);
+
+    public int isExist(String name);
 }

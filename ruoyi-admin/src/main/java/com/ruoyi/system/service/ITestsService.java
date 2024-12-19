@@ -1,5 +1,6 @@
 package com.ruoyi.system.service;
 
+import java.util.Date;
 import java.util.List;
 import com.ruoyi.system.domain.Tests;
 
@@ -43,6 +44,8 @@ public interface ITestsService
      */
     public int updateTests(Tests tests);
 
+    public int updateTestsByName(Tests tests,String name);
+
     /**
      * 批量删除考试管理
      * 
@@ -58,4 +61,6 @@ public interface ITestsService
      * @return 结果
      */
     public int deleteTestsById(Long id);
+
+    public boolean isExist(String name);
 }

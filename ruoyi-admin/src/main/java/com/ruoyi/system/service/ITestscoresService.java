@@ -7,7 +7,7 @@ import com.ruoyi.system.domain.Testscores;
 import java.util.List;
 
 public interface ITestscoresService {
-    public void updateTests(Testscores testscores);
+    public void updateTestscores(Testscores testscores);
 
     public  Double calculateAndSaveScore(Testscores testscores);
 

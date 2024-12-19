@@ -3,6 +3,7 @@ package com.ruoyi.system.mapper;
 import java.util.List;
 import com.ruoyi.system.domain.Tests;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 考试管理Mapper接口
@@ -60,4 +61,8 @@ public interface TestsMapper
      * @return 结果
      */
     public int deleteTestsByIds(Long[] ids);
+
+    public int isExist(@Param("name")String name);
+
+    public int updateTestsByName(@Param("tests") Tests tests,@Param("name") String name);
 }

@@ -47,13 +47,13 @@ public class Tests extends BaseEntity
     private Date endTime;
 
     /** 创建时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;
 
     /** 更新时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date updatedAt;
 
     public void setId(Long id) 
@@ -158,6 +158,8 @@ public class Tests extends BaseEntity
             .append("id", getId())
             .append("paperId", getPaperId())
             .append("testName", getTestName())
+                .append("status", getStatus())
+                .append("totalScore", getTotalScore())
             .append("startTime", getStartTime())
             .append("endTime", getEndTime())
             .append("createdAt", getCreatedAt())

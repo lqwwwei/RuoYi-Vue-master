@@ -14,6 +14,8 @@ public class Testscores {
 
     private String userAnswer;
 
+    private Integer type;
+
     private Double score;
 
     private Date createdAt;
@@ -66,4 +68,8 @@ public class Testscores {
     public Date getUpdatedAt() {
         return updatedAt;
     }
+
+    public Integer getType(){return  type;}
+
+    public void setType(Integer type){this.type=type;}
 }

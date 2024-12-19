@@ -20,4 +20,14 @@ public class PapersServicelmpl implements IPapersService {
 
     @Override
     public  int deletePaperById(Long id){return papersMapper.deletePaperById(id);}
+
+    @Override
+    public int selectPaperByid(Long id){return papersMapper.selectPaperByid(id);}
+
+    @Override
+    public boolean isExist(String name){
+        System.out.println(888);
+        int count = papersMapper.isExist(name);
+        return  count > 0;
+    }
 }
