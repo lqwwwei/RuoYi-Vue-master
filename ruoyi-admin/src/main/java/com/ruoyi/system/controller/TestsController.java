@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.system.service.ITestscoresService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,6 +44,9 @@ public class TestsController extends BaseController
 
     @Autowired
     private ISysUserService userServicel;
+
+    @Autowired
+    ITestscoresService testscoresService;
 
     /**
      * 查询考试管理列表
@@ -144,6 +148,8 @@ public class TestsController extends BaseController
     @PutMapping("/save")
     public AjaxResult save(@RequestBody Tests tests)
     {
+        //计算总分的方法
+        tests.setTotalScore(testscoresService.calculateTotalscore(tests.getId()));
         return toAjax(testsService.updateTests(tests));
     }
 

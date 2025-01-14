@@ -23,7 +23,8 @@ public class TestscoresController extends BaseController {
     @Anonymous
     @PostMapping("/getScore")
     public AjaxResult updateScore(@RequestBody Testscores testScores) {
-        return success(testscoresService.calculateAndSaveScore(testScores));
+        testscoresService.calculateAndSaveScore(testScores);
+        return success();
     }
 
     @ApiOperation("获取作答情况")

@@ -51,7 +51,6 @@ public class TestscoresServicelmpl implements ITestscoresService {
             // 计算分数的逻辑
             double score = 0;
             if(subject.getType()==0) {
-                System.out.println("该题是单选");
                 if (subject.getAnswer().equals(testscores.getUserAnswer())) {
                     score = 3;  // 假设答对得3分
                 } else {
@@ -94,6 +93,7 @@ public class TestscoresServicelmpl implements ITestscoresService {
             // 调用updateTests方法保存或更新记录
 
             updateTestscores(testscores);
+
             return score;
         } else {
             throw new RuntimeException("无法找到对应的试题信息");
@@ -103,5 +103,21 @@ public class TestscoresServicelmpl implements ITestscoresService {
     @Override
     public List<Testscores> getTestscoresById(Long testRecodeId){
         return testscoresMapper.getTestscoresById(testRecodeId);
+    }
+
+    @Override
+    public Double calculateTotalscore (Long testRecodeId){
+        List<Testscores> testScoresList = testscoresMapper.getTestscoresById(testRecodeId);
+        double totalScore = 0.0;
+
+        for (Testscores testScores : testScoresList) {
+            // 调用现有方法为每个题目打分
+            double scoreForThisQuestion = calculateAndSaveScore(testScores);
+
+            // 累加每题得分到总分
+            totalScore += scoreForThisQuestion;
+        }
+        // 如果需要保存整张试卷的总分到数据库或者其他操作，可以在这里完成
+        return totalScore;
     }
 }

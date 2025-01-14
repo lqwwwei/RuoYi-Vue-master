@@ -4,7 +4,6 @@ import com.ruoyi.system.domain.Papers;
 import com.ruoyi.system.domain.Subjects;
 import com.ruoyi.system.mapper.SubjectsMapper;
 import com.ruoyi.system.service.ISubjectsService;
-import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

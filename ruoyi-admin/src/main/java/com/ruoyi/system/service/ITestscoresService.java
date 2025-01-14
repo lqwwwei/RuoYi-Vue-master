@@ -12,4 +12,6 @@ public interface ITestscoresService {
     public  Double calculateAndSaveScore(Testscores testscores);
 
     public List<Testscores> getTestscoresById(Long testRecodeId);
+
+    public Double calculateTotalscore (Long testRecodeId);
 }

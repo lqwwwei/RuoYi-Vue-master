@@ -4,8 +4,6 @@ import com.ruoyi.common.annotation.Anonymous;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.system.domain.Papers;
-import com.ruoyi.system.domain.Subjects;
-import com.ruoyi.system.domain.Tests;
 import com.ruoyi.system.service.IPapersService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

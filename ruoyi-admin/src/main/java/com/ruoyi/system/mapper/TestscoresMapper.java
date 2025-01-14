@@ -14,4 +14,5 @@ public interface TestscoresMapper {
     public  Testscores findRecode(@Param("testrecordsId") Long testrecordsId, @Param("subjectId") Long subjectId);
 
     public List<Testscores> getTestscoresById(@Param("testRecodeId") Long testRecodeId);
+
 }
